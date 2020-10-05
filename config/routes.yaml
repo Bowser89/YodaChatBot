@@ -1,0 +1,3 @@
+yoda.index:
+    path: /
+    controller: App\Controller\MainController::indexAction
