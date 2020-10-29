@@ -27,7 +27,7 @@ return PhpCsFixer\Config::create()
         'fully_qualified_strict_types'                     => true,
         'general_phpdoc_annotation_remove'                 => ['author'],
         'global_namespace_import'                          => ['import_classes' => true],
-        'header_comment'                                   => ['commentType' => 'PHPDoc', 'location' => 'after_open', 'header' => "This file is part of the eLearnSecurity website project.\n\n@copyright Caendra Inc."],
+        'header_comment'                                   => ['commentType' => 'PHPDoc', 'location' => 'after_open', 'header' => "This file is part of the Inbenta coding challenge."],
         'heredoc_indentation'                              => true,
         'implode_call'                                     => true,
         'is_null'                                          => true,

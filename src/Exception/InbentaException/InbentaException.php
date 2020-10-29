@@ -1,9 +1,7 @@
 <?php
 
 /**
- * This file is part of the eLearnSecurity website project.
- *
- * @copyright Caendra Inc.
+ * This file is part of the Inbenta coding challenge.
  */
 
 declare(strict_types=1);
