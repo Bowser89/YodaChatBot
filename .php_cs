@@ -4,7 +4,6 @@ $finder = PhpCsFixer\Finder::create()
     ->notPath('eLearnSecurity/Bundle/AppBundle/DependencyInjection/Configuration.php') // excluded due to method_chaining_indentation
     ->in([
         __DIR__.'/src',
-        __DIR__.'/app/acceptance/bootstrap',
     ]);
 
 return PhpCsFixer\Config::create()
