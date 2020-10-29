@@ -4,6 +4,8 @@
  * This file is part of the Inbenta coding challenge.
  */
 
+declare(strict_types=1);
+
 namespace App\Tests\Service;
 
 use App\Service\AuthenticationService;

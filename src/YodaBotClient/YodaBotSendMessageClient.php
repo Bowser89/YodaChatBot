@@ -15,10 +15,10 @@ use App\DTO\YodaBotMessageDto;
  */
 class YodaBotSendMessageClient extends YodaBotAbstractClient
 {
-    const SESSION_NOT_FOUND_MESSAGE_KEY          = 'answerNotFound';
     /**
      * Utilities constants.
      */
+    const SESSION_NOT_FOUND_MESSAGE_KEY          = 'answerNotFound';
     private const SEND_MESSAGE_ENDPOINT_KEY      = 'endPoint';
     private const SEND_MESSAGE_ENDPOINT_VALUE    = '/conversation/message';
     private const SEND_MESSAGE_HTTP_METHOD_KEY   = 'method';
