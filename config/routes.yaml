@@ -1,3 +1,9 @@
 yoda.index:
     path: /
     controller: App\Controller\MainController::indexAction
+
+# Yoda API namespace#
+
+yoda_api.send_message:
+    path: /api/send_message
+    controller: App\Controller\YodaBotController::sendMessageAction
