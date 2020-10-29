@@ -6,7 +6,9 @@ parameters:
     inbenta.graph_api_url:                "%env(string:INBENTA_GRAPH_API_URL)%"
     inbenta.client.class:                 App\InbentaClient\InbentaClient
     inbenta.graph_api_client.class:       App\InbentaGraphApiClient\InbentaGraphApiClient
+    inbenta.authentication_service_class: App\Service\AuthenticationService
     yoda_bot.send_message_client.class:   App\YodaBotClient\YodaBotSendMessageClient
+    yoda_bot.yoda_bot_service.class:      App\Service\YodaBotService
     utility.yoda_bot_text_analyzer.class: App\Utility\YodaBotTextAnalyzer
 
 services:
@@ -53,9 +55,15 @@ services:
             - '@http_client'
 
     inbenta.authentication_service:
-        class: App\Service\AuthenticationService
+        class: '%inbenta.authentication_service_class%'
         arguments:
             - '@http_client'
+            - '@session'
+
+    yoda_bot.yoda_bot_service:
+        class: '%yoda_bot.yoda_bot_service.class%'
+        arguments:
+            - '@yoda_bot.send_message_client'
             - '@session'
 
     yoda_bot.send_message_client:
