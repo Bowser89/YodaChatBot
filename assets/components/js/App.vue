@@ -1,6 +1,5 @@
 <template>
     <div>
-        <div id="crap"></div>
         <h2>Talk with Yoda!</h2>
         <div id="conversation"></div>
         <p v-if="isWriting">Yoda is writing . . .</p>
@@ -39,8 +38,6 @@
             },
             appendToConversation(data) {
                 var conversation;
-                console.log(data.messages[0]);
-                $('#crap').append(data.counter);
                 conversation = '<b>'+data.source+' Says:</b> ';
 
                 if (data.titlePhrase != null) {
