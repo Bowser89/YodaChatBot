@@ -1,8 +1,7 @@
 <?php
+
 /**
  * This file is part of the eLearnSecurity website project.
- *
- * Created on 29/10/2020
  *
  * @copyright Caendra Inc.
  */
@@ -16,6 +15,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * AuthenticationServiceTest.
+ *
+ * @coversNothing
  */
 class AuthenticationServiceTest extends TestCase
 {
@@ -68,10 +69,8 @@ class AuthenticationServiceTest extends TestCase
      */
     private $authenticationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-
-
     }
 }

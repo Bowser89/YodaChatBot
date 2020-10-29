@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
+
 declare(strict_types=1);
 
 namespace App\InbentaClient;
@@ -8,9 +14,7 @@ use App\Entity\AuthenticationToken;
 use App\Entity\SessionToken;
 use App\Exception\InbentaException\InbentaException;
 use App\Service\AuthenticationService;
-use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -63,16 +67,14 @@ class InbentaClient implements InbentaClientInterface
     /**
      * UaaClient constructor.
      */
-    public function __construct
-    (
+    public function __construct(
         HttpClientInterface $client,
         SessionInterface $session,
         AuthenticationService $authenticationService,
         LoggerInterface $logger,
         string $inbentaApiKey,
         string $inbentaApiVersion
-    )
-    {
+    ) {
         $this->client                = $client;
         $this->session               = $session;
         $this->authenticationService = $authenticationService;
@@ -82,8 +84,6 @@ class InbentaClient implements InbentaClientInterface
     }
 
     /**
-     * @param array $request
-     * @return ResponseInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function call(array $request): ResponseInterface
@@ -127,8 +127,7 @@ class InbentaClient implements InbentaClientInterface
      */
     private function createBaseRequest(AuthenticationToken $authenticationToken, SessionToken $sessionToken): array
     {
-        $baseRequest  =
-            [
+        return [
                 'headers' => [
                     'Content-Type'                                      => 'application/json',
                     'Authorization'                                     => sprintf('Bearer %s', $authenticationToken->getAccessToken()),
@@ -136,7 +135,5 @@ class InbentaClient implements InbentaClientInterface
                     AuthenticationService::X_INBENTA_SESSION_KEY_HEADER => sprintf('Bearer %s', $sessionToken->getSessionToken()),
                 ],
             ];
-
-        return $baseRequest;
     }
 }

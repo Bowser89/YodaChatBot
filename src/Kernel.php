@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
+
 namespace App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;

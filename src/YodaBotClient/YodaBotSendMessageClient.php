@@ -1,17 +1,23 @@
 <?php
 
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
+
 declare(strict_types=1);
 
 namespace App\YodaBotClient;
 
 use App\DTO\YodaBotMessageDto;
-use App\Service\YodaBotService;
 
 /**
  * YodaBotSendMessageClient.
  */
 class YodaBotSendMessageClient extends YodaBotAbstractClient
 {
+    const SESSION_NOT_FOUND_MESSAGE_KEY          = 'answerNotFound';
     /**
      * Utilities constants.
      */
@@ -23,10 +29,10 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
     private const ANSWER_NOT_FOUND_FLAG_FIELD    = 'no-results';
     private const NOT_FOUND_ANSWERS_THRESHOLD    = 2;
     private const NOT_FOUND_MESSAGE              = 'Sorry, I haven\'t found an answer to your question! Please try again.';
-    const SESSION_NOT_FOUND_MESSAGE_KEY          = 'answerNotFound';
 
     /**
      * Sends a message to YodaBot.
+     *
      * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
@@ -39,11 +45,11 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
 
         if ($analysisResponse) {
             $this->resetNotFoundAnswerCounter();
+
             return $this->returnStarWarsMoviesDto();
-        } else {
-            // Default behaviour
-            return $this->askYoda($message);
         }
+        // Default behaviour
+        return $this->askYoda($message);
     }
 
     /**
@@ -93,8 +99,7 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
     {
         $starWarsMovies = $this->inbentaGraphApiClient->getStarWarsMovies();
 
-        return YodaBotMessageDto::createFormattedMessage
-        (
+        return YodaBotMessageDto::createFormattedMessage(
             $starWarsMovies,
             YodaBotMessageDto::YODABOT_SOURCE,
             'The force is in this movies:'
@@ -108,8 +113,7 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
     {
         $starWarsCharacters = $this->inbentaGraphApiClient->getStarWarsCharacters();
 
-        return YodaBotMessageDto::createFormattedMessage
-        (
+        return YodaBotMessageDto::createFormattedMessage(
             $starWarsCharacters,
             YodaBotMessageDto::YODABOT_SOURCE,
             'Crap! I haven\'t found what you\'re looking for. But hey, here\'s a list of Star Wars Characters:'
@@ -129,11 +133,12 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
      */
     private function checkIfNotFoundAndUpdateSessionCounter(array $response): bool
     {
-        $answerFlags = $response['answers'][0]['flags'];
+        $answerFlags     = $response['answers'][0]['flags'];
         $notFoundCounter = $this->session->get(self::SESSION_NOT_FOUND_MESSAGE_KEY);
 
         if (0 !== count($answerFlags) && self::ANSWER_NOT_FOUND_FLAG_FIELD === $answerFlags[0]) {
-            $this->session->set(self::SESSION_NOT_FOUND_MESSAGE_KEY,++$notFoundCounter);
+            $this->session->set(self::SESSION_NOT_FOUND_MESSAGE_KEY, ++$notFoundCounter);
+
             return true;
         }
 

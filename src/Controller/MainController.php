@@ -1,18 +1,18 @@
 <?php
 
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
+
 namespace App\Controller;
 
-use App\InbentaClient\InbentaClient;
-use App\InbentaGraphApiClient\InbentaGraphApiClient;
-use App\Service\AuthenticationService;
 use App\Service\YodaBotService;
 use App\YodaBotClient\YodaBotSendMessageClient;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * MainController.

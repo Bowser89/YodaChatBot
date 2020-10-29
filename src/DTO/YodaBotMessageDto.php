@@ -1,9 +1,12 @@
 <?php
 
-namespace App\DTO;
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
 
-use Symfony\Contracts\HttpClient\ResponseInterface;
-use DateTime;
+namespace App\DTO;
 
 /**
  * YodaBotMessageDto.
@@ -47,7 +50,7 @@ class YodaBotMessageDto
     /**
      * Returns a formatted object that will be sent to the frontend.
      */
-    public static function createFormattedMessage(array $messages, string $source, string $titlePhrase = null): self
+    public static function createFormattedMessage(array $messages, string $source, ?string $titlePhrase = null): self
     {
         $yodaBotDto = new self();
 

@@ -1,12 +1,17 @@
 <?php
 
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
+
 declare(strict_types=1);
 
 namespace App\YodaBotClient;
 
 use App\InbentaClient\InbentaClient;
 use App\InbentaGraphApiClient\InbentaGraphApiClient;
-use App\Service\YodaBotService;
 use App\Utility\TextAnalyzerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -44,8 +49,7 @@ abstract class YodaBotAbstractClient
     /**
      * Constructor method.
      */
-    public function __construct
-    (InbentaClient $inbentaClient,
+    public function __construct(InbentaClient $inbentaClient,
      InbentaGraphApiClient $inbentaGraphApiClient,
      SessionInterface $session,
      ?TextAnalyzerInterface $textAnalyzer = null)

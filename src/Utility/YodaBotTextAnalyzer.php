@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
+
 declare(strict_types=1);
 
 namespace App\Utility;
@@ -20,7 +26,7 @@ class YodaBotTextAnalyzer implements TextAnalyzerInterface
     public function analyze(string $message): bool
     {
         $lowercaseMessage = strtolower($message);
-        if (strpos($lowercaseMessage, self::WORD_TO_SEARCH) !== false) {
+        if (false !== strpos($lowercaseMessage, self::WORD_TO_SEARCH)) {
             return true;
         }
 

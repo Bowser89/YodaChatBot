@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
+
 declare(strict_types=1);
 
 namespace App\Service;
@@ -7,7 +13,6 @@ namespace App\Service;
 use App\Entity\AuthenticationToken;
 use App\Entity\SessionToken;
 use App\Exception\InbentaException\InvalidInbentaParametersException;
-use App\Exception\InvalidParameterException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -35,7 +40,7 @@ class AuthenticationService
     const INBENTA_AUTHENTICATION_ENDPOINT               = '/auth';
     const INBENTA_AUTHENTICATION_REFRESH_TOKEN_ENDPOINT = '/refreshToken';
     const INBENTA_CHATBOT_OPEN_CONVERSATION_ENDPOINT    = '/conversation';
-    
+
     /**
      * The http client interface.
      *
@@ -88,8 +93,7 @@ class AuthenticationService
         string $inbentaSecretKey,
         string $inbentaAuthenticationUri,
         string $inbentaApiVersion
-    )
-    {
+    ) {
         $this->client                   = $client;
         $this->session                  = $session;
         $this->inbentaApiKey            = $inbentaApiKey;
@@ -128,23 +132,21 @@ class AuthenticationService
         $request['headers']['Authorization'] = sprintf('Bearer %s', $authenticationToken->getAccessToken());
         $authenticationUrl                   = $this->generateAuthenticationBaseUrl();
 
-        $response = $this->client->request
-        (
+        $response = $this->client->request(
             'POST',
             sprintf('%s%s', $authenticationUrl, self::INBENTA_AUTHENTICATION_REFRESH_TOKEN_ENDPOINT),
             $request
         );
 
         if (Response::HTTP_OK !== $response->getStatusCode()) {
-            throw new InvalidInbentaParametersException($response->getStatusCode(),"There was a problem during the authentication process. Please check the authentication variables.");
-        } else {
-            $decodedResponse = json_decode($response->getContent(), true);
-            $authenticationToken
-                ->setAccessToken($decodedResponse["accessToken"])
-                ->setTokenExpiration($decodedResponse["expiration"])
-                ->setTokenExpirationRemainingTime($decodedResponse["expires_in"]);
-            $this->session->set(self::AUTHENTICATION_TOKEN_SESSION_KEY, $authenticationToken);
+            throw new InvalidInbentaParametersException($response->getStatusCode(), 'There was a problem during the authentication process. Please check the authentication variables.');
         }
+        $decodedResponse = json_decode($response->getContent(), true);
+        $authenticationToken
+            ->setAccessToken($decodedResponse['accessToken'])
+            ->setTokenExpiration($decodedResponse['expiration'])
+            ->setTokenExpirationRemainingTime($decodedResponse['expires_in']);
+        $this->session->set(self::AUTHENTICATION_TOKEN_SESSION_KEY, $authenticationToken);
     }
 
     /**
@@ -154,26 +156,25 @@ class AuthenticationService
     {
         if (!$this->session->get(self::SESSION_TOKEN_KEY)) {
             /** @var AuthenticationToken $authenticationToken */
-            $authenticationToken = $this->session->get(self::AUTHENTICATION_TOKEN_SESSION_KEY);
-            $chatbotUrl          = $authenticationToken->getChatBotApiUrl();
-            $request             = $this->createAuthenticationBaseRequest();
+            $authenticationToken                 = $this->session->get(self::AUTHENTICATION_TOKEN_SESSION_KEY);
+            $chatbotUrl                          = $authenticationToken->getChatBotApiUrl();
+            $request                             = $this->createAuthenticationBaseRequest();
             $request['headers']['Authorization'] = sprintf('Bearer %s', $authenticationToken->getAccessToken());
-            $response = $this->client->request(
+            $response                            = $this->client->request(
                 'POST',
                 sprintf('%s/%s%s', $chatbotUrl, $this->inbentaApiVersion, self::INBENTA_CHATBOT_OPEN_CONVERSATION_ENDPOINT),
                 $request
             );
 
             if (Response::HTTP_OK !== $response->getStatusCode()) {
-                throw new InvalidInbentaParametersException($response->getStatusCode(),"There was a problem during the authentication process. Please check the authentication variables.");
-            } else {
-                $decodedResponse = json_decode($response->getContent(), true);
-                $sessionId       = $decodedResponse['sessionId'];
-                $sessionToken    = $decodedResponse['sessionToken'];
-                $sessionToken    = new SessionToken($sessionId, $sessionToken);
-
-                $this->session->set(self::SESSION_TOKEN_KEY, $sessionToken);
+                throw new InvalidInbentaParametersException($response->getStatusCode(), 'There was a problem during the authentication process. Please check the authentication variables.');
             }
+            $decodedResponse = json_decode($response->getContent(), true);
+            $sessionId       = $decodedResponse['sessionId'];
+            $sessionToken    = $decodedResponse['sessionToken'];
+            $sessionToken    = new SessionToken($sessionId, $sessionToken);
+
+            $this->session->set(self::SESSION_TOKEN_KEY, $sessionToken);
         }
     }
 
@@ -182,15 +183,12 @@ class AuthenticationService
      */
     public function createAuthenticationBaseRequest(): array
     {
-        $baseRequest =
-            [
+        return [
                 'headers' => [
                     'Content-Type'                 => 'application/json',
-                    self::X_INBENTA_API_KEY_HEADER => $this->inbentaApiKey
+                    self::X_INBENTA_API_KEY_HEADER => $this->inbentaApiKey,
                 ],
             ];
-
-        return $baseRequest;
     }
 
     /**
@@ -200,27 +198,25 @@ class AuthenticationService
     {
         $authenticationBaseUrl = $this->generateAuthenticationBaseUrl();
         $request['body']       = json_encode(['secret' => $this->inbentaSecretKey]);
-        $response              = $this->client->request
-        (
+        $response              = $this->client->request(
             'POST',
             sprintf('%s%s', $authenticationBaseUrl, self::INBENTA_AUTHENTICATION_ENDPOINT),
             $request
         );
 
         if (Response::HTTP_OK !== $response->getStatusCode()) {
-            throw new InvalidInbentaParametersException($response->getStatusCode(),"There was a problem during the authentication process. Please check the authentication variables.");
-        } else {
-            $decodedResponse     = json_decode($response->getContent(), true);
-            $authenticationToken = new AuthenticationToken(
-                $decodedResponse["accessToken"],
-                $decodedResponse["expiration"],
-                $decodedResponse["expires_in"],
-                $decodedResponse["apis"],
-                $decodedResponse["isUserIdentified"]
+            throw new InvalidInbentaParametersException($response->getStatusCode(), 'There was a problem during the authentication process. Please check the authentication variables.');
+        }
+        $decodedResponse     = json_decode($response->getContent(), true);
+        $authenticationToken = new AuthenticationToken(
+                $decodedResponse['accessToken'],
+                $decodedResponse['expiration'],
+                $decodedResponse['expires_in'],
+                $decodedResponse['apis'],
+                $decodedResponse['isUserIdentified']
             );
 
-            $this->session->set(self::AUTHENTICATION_TOKEN_SESSION_KEY, $authenticationToken);
-        }
+        $this->session->set(self::AUTHENTICATION_TOKEN_SESSION_KEY, $authenticationToken);
     }
 
     /**

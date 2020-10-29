@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Entity;
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
 
-use DateTime;
+namespace App\Entity;
 
 /**
  * AuthenticationToken.
@@ -17,7 +21,7 @@ class AuthenticationToken
     /**
      * The array key where the chatbot api url is associated.
      */
-    const CHATBOT_API_KEY = "chatbot";
+    const CHATBOT_API_KEY = 'chatbot';
 
     /**
      * The access token value.
@@ -60,8 +64,7 @@ class AuthenticationToken
         int $tokenExpirationRemainingTime,
         array $apiInformation,
         bool $isUserIdentified
-    )
-    {
+    ) {
         $this->accessToken                  = $accessToken;
         $this->tokenExpiration              = $tokenExpiration;
         $this->tokenExpirationRemainingTime = $tokenExpirationRemainingTime;
@@ -94,7 +97,7 @@ class AuthenticationToken
     }
 
     /**
-     * Gets the API
+     * Gets the API.
      */
     public function getApiInformation(): array
     {
@@ -166,5 +169,4 @@ class AuthenticationToken
     {
         return $this->apiInformation[self::CHATBOT_API_KEY];
     }
-
 }

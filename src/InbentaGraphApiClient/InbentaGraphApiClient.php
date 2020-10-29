@@ -1,10 +1,15 @@
 <?php
 
+/**
+ * This file is part of the eLearnSecurity website project.
+ *
+ * @copyright Caendra Inc.
+ */
+
 declare(strict_types=1);
 
 namespace App\InbentaGraphApiClient;
 
-use App\DTO\YodaBotMessageDto;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -56,7 +61,7 @@ class InbentaGraphApiClient
         $retrievedMovies = json_decode($response->getContent());
 
         foreach ($retrievedMovies->data->allFilms->films as $movie) {
-           $moviesTitles[] = $movie->title;
+            $moviesTitles[] = $movie->title;
         }
 
         return $moviesTitles;
