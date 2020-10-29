@@ -12,9 +12,18 @@ use App\Service\YodaBotService;
  */
 class YodaBotSendMessageClient extends YodaBotAbstractClient
 {
-    private const SEND_MESSAGE_ENDPOINT    = '/conversation/message';
-    private const SEND_MESSAGE_HTTP_METHOD = 'POST';
-    private const NOT_FOUND_MESSAGE        = 'Sorry, I haven\'t found an answer to your question! Please try again.';
+    /**
+     * Utilities constants.
+     */
+    private const SEND_MESSAGE_ENDPOINT_KEY      = 'endPoint';
+    private const SEND_MESSAGE_ENDPOINT_VALUE    = '/conversation/message';
+    private const SEND_MESSAGE_HTTP_METHOD_KEY   = 'method';
+    private const SEND_MESSAGE_HTTP_METHOD_VALUE = 'POST';
+    private const SEND_MESSAGE_BODY_KEY          = 'body';
+    private const ANSWER_NOT_FOUND_FLAG_FIELD    = 'no-results';
+    private const NOT_FOUND_ANSWERS_THRESHOLD    = 2;
+    private const NOT_FOUND_MESSAGE              = 'Sorry, I haven\'t found an answer to your question! Please try again.';
+    const SESSION_NOT_FOUND_MESSAGE_KEY          = 'answerNotFound';
 
     /**
      * Sends a message to YodaBot.
@@ -43,25 +52,30 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
      */
     private function askYoda(string $message): YodaBotMessageDto
     {
-        $request['body']     = ['message' => $message];
-        $request['method']   = self::SEND_MESSAGE_HTTP_METHOD;
-        $request['endPoint'] = self::SEND_MESSAGE_ENDPOINT;
+        $request[self::SEND_MESSAGE_BODY_KEY]        = ['message' => $message];
+        $request[self::SEND_MESSAGE_HTTP_METHOD_KEY] = self::SEND_MESSAGE_HTTP_METHOD_VALUE;
+        $request[self::SEND_MESSAGE_ENDPOINT_KEY]    = self::SEND_MESSAGE_ENDPOINT_VALUE;
+
+        // Performing request
         $response            = $this->inbentaClient->call($request);
         $decodedResponse     = json_decode($response->getContent(), true);
         $answerNotFound      = $this->checkIfNotFoundAndUpdateSessionCounter($decodedResponse);
-        $notFoundCounter     = $this->session->get(YodaBotService::SESSION_NOT_FOUND_MESSAGE_KEY);
+        $notFoundCounter     = $this->session->get(self::SESSION_NOT_FOUND_MESSAGE_KEY);
+        $responseDto         = null;
 
-        if (YodaBotService::NOT_FOUND_ANSWERS_THRESHOLD === $notFoundCounter) {
+        if (self::NOT_FOUND_ANSWERS_THRESHOLD === $notFoundCounter) {
             $this->resetNotFoundAnswerCounter();
-            return $this->returnStarWarsCharactersDto();
+            $responseDto = $this->returnStarWarsCharactersDto();
         } else {
             if ($answerNotFound) {
-                return $this->returnNotFoundMessage();
+                $responseDto = $this->returnNotFoundMessage();
             } else {
                 $this->resetNotFoundAnswerCounter();
-                return YodaBotMessageDto::createFormattedMessage($decodedResponse['answers'][0]['messageList'], YodaBotMessageDto::YODABOT_SOURCE);
+                $responseDto = YodaBotMessageDto::createFormattedMessage($decodedResponse['answers'][0]['messageList'], YodaBotMessageDto::YODABOT_SOURCE);
             }
         }
+
+        return $responseDto;
     }
 
     /**
@@ -107,7 +121,7 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
      */
     private function resetNotFoundAnswerCounter(): void
     {
-        $this->session->set(YodaBotService::SESSION_NOT_FOUND_MESSAGE_KEY, 0);
+        $this->session->set(self::SESSION_NOT_FOUND_MESSAGE_KEY, 0);
     }
 
     /**
@@ -116,10 +130,10 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
     private function checkIfNotFoundAndUpdateSessionCounter(array $response): bool
     {
         $answerFlags = $response['answers'][0]['flags'];
-        $notFoundCounter = $this->session->get(YodaBotService::SESSION_NOT_FOUND_MESSAGE_KEY);
+        $notFoundCounter = $this->session->get(self::SESSION_NOT_FOUND_MESSAGE_KEY);
 
-        if (0 !== count($answerFlags) && YodaBotService::ANSWER_NOT_FOUND_FLAG_FIELD === $answerFlags[0]) {
-            $this->session->set(YodaBotService::SESSION_NOT_FOUND_MESSAGE_KEY,++$notFoundCounter);
+        if (0 !== count($answerFlags) && self::ANSWER_NOT_FOUND_FLAG_FIELD === $answerFlags[0]) {
+            $this->session->set(self::SESSION_NOT_FOUND_MESSAGE_KEY,++$notFoundCounter);
             return true;
         }
 

@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\DTO\YodaBotMessageDto;
 use App\YodaBotClient\YodaBotSendMessageClient;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * YodaBotService.
@@ -13,11 +14,10 @@ use App\YodaBotClient\YodaBotSendMessageClient;
 class YodaBotService
 {
     /**
-     * Utilities values.
+     * Utilities constants.
      */
-    const SESSION_NOT_FOUND_MESSAGE_KEY = 'answerNotFound';
-    const ANSWER_NOT_FOUND_FLAG_FIELD   = 'no-results';
-    const NOT_FOUND_ANSWERS_THRESHOLD   = 2;
+    const SESSION_CONVERSATION_LIST = 'conversationList';
+
     /**
      * The YodaBotSendMessageClient instance.
      *
@@ -25,9 +25,17 @@ class YodaBotService
      */
     private $yodaBotSendMessageClient;
 
-    public function __construct(YodaBotSendMessageClient $yodaBotSendMessageClient)
+    /**
+     * The session.
+     *
+     * @var SessionInterface
+     */
+    private $session;
+
+    public function __construct(YodaBotSendMessageClient $yodaBotSendMessageClient, SessionInterface $session)
     {
         $this->yodaBotSendMessageClient = $yodaBotSendMessageClient;
+        $this->session                  = $session;
     }
 
     /**
@@ -36,5 +44,16 @@ class YodaBotService
     public function sendMessage(string $message): YodaBotMessageDto
     {
         return $this->yodaBotSendMessageClient->sendMessage($message);
+    }
+
+    /**
+     * Stores in session a serialized message DTO.
+     */
+    public function saveMessageInSession(YodaBotMessageDto $formattedMessage): void
+    {
+        $previousConversation   = $this->session->get(self::SESSION_CONVERSATION_LIST);
+        $previousConversation[] = $formattedMessage->serialize();
+
+        $this->session->replace([self::SESSION_CONVERSATION_LIST => $previousConversation]);
     }
 }

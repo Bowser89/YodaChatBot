@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use Symfony\Contracts\HttpClient\ResponseInterface;
+use DateTime;
 
 /**
  * YodaBotMessageDto.
@@ -14,12 +15,20 @@ class YodaBotMessageDto
      */
     const YODABOT_SOURCE = 'YodaBot';
     const HUMAN_SOURCE   = 'Human';
+
     /**
-     * The message.
+     * Constants used to serialize the DTO.
+     */
+    const SERIALIZED_TITLE_PHRASE_FIELD = 'titlePhrase';
+    const SERIALIZED_MESSAGES_FIELD     = 'messages';
+    const SERIALIZED_SOURCE_FIELD       = 'source';
+
+    /**
+     * The messages.
      *
      * @var array
      */
-    private $message;
+    private $messages;
 
     /**
      * The message source.
@@ -38,7 +47,7 @@ class YodaBotMessageDto
     /**
      * Returns a formatted object that will be sent to the frontend.
      */
-    public static function createFormattedMessage(array $message, string $source, string $titlePhrase = null): self
+    public static function createFormattedMessage(array $messages, string $source, string $titlePhrase = null): self
     {
         $yodaBotDto = new self();
 
@@ -47,26 +56,26 @@ class YodaBotMessageDto
         }
 
         $yodaBotDto
-            ->setMessage($message)
+            ->setMessages($messages)
             ->setSource($source);
 
         return $yodaBotDto;
     }
 
     /**
-     * Gets the message.
+     * Gets the messages.
      */
-    public function getMessage(): array
+    public function getMessages(): array
     {
-        return $this->message;
+        return $this->messages;
     }
 
     /**
-     * @param array $message
+     * Sets the messages.
      */
-    public function setMessage(array $message): self
+    public function setMessages(array $messages): self
     {
-        $this->message = $message;
+        $this->messages = $messages;
 
         return $this;
     }
@@ -105,5 +114,23 @@ class YodaBotMessageDto
         $this->titlePhrase = $titlePhrase;
 
         return $this;
+    }
+
+    /**
+     * Serializes the object as array.
+     */
+    public function serialize(): array
+    {
+        $encodedDto =
+            [
+                self::SERIALIZED_MESSAGES_FIELD => $this->getMessages(),
+                self::SERIALIZED_SOURCE_FIELD   => $this->getSource(),
+            ];
+
+        if ($this->getTitlePhrase()) {
+            $encodedDto[self::SERIALIZED_TITLE_PHRASE_FIELD] = $this->getTitlePhrase();
+        }
+
+        return $encodedDto;
     }
 }

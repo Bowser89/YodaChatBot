@@ -20,14 +20,14 @@ class AuthenticationService
     /**
      * Inbenta headers keys.
      */
-    const X_INBENTA_API_KEY_HEADER                      = 'x-inbenta-key';
-    const X_INBENTA_SESSION_KEY_HEADER                  = 'x-inbenta-session';
+    const X_INBENTA_API_KEY_HEADER     = 'x-inbenta-key';
+    const X_INBENTA_SESSION_KEY_HEADER = 'x-inbenta-session';
 
     /**
      * Custom session keys.
      */
-    const AUTHENTICATION_TOKEN_SESSION_KEY              = 'authenticationToken';
-    const SESSION_TOKEN_KEY                             = 'sessionToken';
+    const AUTHENTICATION_TOKEN_SESSION_KEY = 'authenticationToken';
+    const SESSION_TOKEN_KEY                = 'sessionToken';
 
     /**
      * Authentication and session endpoints.

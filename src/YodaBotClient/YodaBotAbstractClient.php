@@ -6,6 +6,7 @@ namespace App\YodaBotClient;
 
 use App\InbentaClient\InbentaClient;
 use App\InbentaGraphApiClient\InbentaGraphApiClient;
+use App\Service\YodaBotService;
 use App\Utility\TextAnalyzerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 

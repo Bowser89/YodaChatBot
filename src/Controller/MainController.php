@@ -24,8 +24,15 @@ class MainController extends AbstractController
      */
     public function indexAction(SessionInterface $session): Response
     {
-        $session->set(YodaBotService::SESSION_NOT_FOUND_MESSAGE_KEY, 0);
+        $session->set(YodaBotSendMessageClient::SESSION_NOT_FOUND_MESSAGE_KEY, 0);
+        $previousConversation = $session->get(YodaBotService::SESSION_CONVERSATION_LIST);
 
-        return $this->render('index.html.twig');
+        if (!$previousConversation) {
+            $session->set(YodaBotService::SESSION_CONVERSATION_LIST, []);
+        }
+
+        $data = ['conversation' => $previousConversation];
+
+        return $this->render('index.html.twig', $data);
     }
 }

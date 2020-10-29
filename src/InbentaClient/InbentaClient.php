@@ -11,6 +11,7 @@ use App\Service\AuthenticationService;
 use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\Exception\TransportException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -23,11 +24,6 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
  */
 class InbentaClient implements InbentaClientInterface
 {
-    /**
-     * Default error status code.
-     */
-    const DEFAULT_ERROR_STATUS_CODE = 500;
-
     /**
      * @var HttpClientInterface The http client
      */
@@ -51,7 +47,7 @@ class InbentaClient implements InbentaClientInterface
     private $logger;
 
     /**
-     * The inbenta api key
+     * The inbenta api key.
      *
      * @var string
      */
@@ -110,8 +106,7 @@ class InbentaClient implements InbentaClientInterface
         } catch (InbentaException $e) {
             throw new InbentaException($e->getCode(), $e->getMessage());
         } catch (TransportExceptionInterface $e) {
-            exit();
-            throw new InbentaException(500, $e->getMessage());
+            throw new InbentaException(Response::HTTP_INTERNAL_SERVER_ERROR, $e->getMessage());
         }
     }
 
