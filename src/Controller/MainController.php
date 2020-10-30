@@ -25,10 +25,10 @@ class MainController extends AbstractController
     public function indexAction(SessionInterface $session): Response
     {
         $session->set(YodaBotSendMessageClient::SESSION_NOT_FOUND_MESSAGE_KEY, 0);
-        $previousConversation = $session->get(YodaBotService::SESSION_CONVERSATION_LIST);
+        $previousConversation = $session->get(YodaBotService::SESSION_CONVERSATION_LIST) ?? [];
 
         if (!$previousConversation) {
-            $session->set(YodaBotService::SESSION_CONVERSATION_LIST, []);
+            $session->set(YodaBotService::SESSION_CONVERSATION_LIST, $previousConversation);
         }
 
         $data = ['conversation' => $previousConversation];
