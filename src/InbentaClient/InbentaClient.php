@@ -49,7 +49,7 @@ class InbentaClient implements InbentaClientInterface
     private $logger;
 
     /**
-     * The inbenta api key.
+     * The Inbenta api key.
      *
      * @var string
      */
@@ -63,7 +63,7 @@ class InbentaClient implements InbentaClientInterface
     private $inbentaApiVersion;
 
     /**
-     * UaaClient constructor.
+     * The constructor method.
      */
     public function __construct(
         HttpClientInterface $client,
@@ -87,13 +87,10 @@ class InbentaClient implements InbentaClientInterface
     public function call(array $request): ResponseInterface
     {
         try {
-            $this->authenticationService->setAuthenticationTokenIfNotExists();
-            $this->authenticationService->checkSessionToken();
-            $authenticationToken = $this->session->get(AuthenticationService::AUTHENTICATION_TOKEN_SESSION_KEY);
-            $sessionToken        = $this->session->get(AuthenticationService::SESSION_TOKEN_KEY);
+            $authenticationToken = $this->authenticationService->setAndReturnAuthenticationTokenIfNotExists();
+            $sessionToken        = $this->authenticationService->checkAndReturnSessionToken();
             $baseRequest         = $this->createBaseRequest($authenticationToken, $sessionToken);
             $url                 = sprintf('%s/%s%s', $authenticationToken->getChatBotApiUrl(), $this->inbentaApiVersion, $request['endPoint']);
-
             $completeRequest     = $this->createCompleteRequest($baseRequest, $request);
 
             return $this->client->request(

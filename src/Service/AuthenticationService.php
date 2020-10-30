@@ -101,58 +101,39 @@ class AuthenticationService
     }
 
     /**
-     * Gets and stores in session an autentication token if not already set.
-     * If token is almost expired it's automatically refreshed.
+     * Gets and stores in session an authentication token if not already set.
+     * If token is almost expired it's automatically refreshed. Finally it returns the Authentication token.
+     *
+     * @throws InvalidInbentaParametersException If something goes wrong calling the API
      */
-    public function setAuthenticationTokenIfNotExists(): void
+    public function setAndReturnAuthenticationTokenIfNotExists(): AuthenticationToken
     {
         /** @var AuthenticationToken|null $authenticationToken */
         $authenticationToken = $this->session->get(self::AUTHENTICATION_TOKEN_SESSION_KEY);
         $baseRequest         = $this->createAuthenticationBaseRequest();
 
         if (!$authenticationToken) {
-            $this->createAndStoreAuthenticationToken($baseRequest);
+            $authenticationToken = $this->createAndStoreAuthenticationToken($baseRequest);
         } else {
             if ($authenticationToken->hasToBeRefreshed()) {
-                $this->refreshAuthenticationToken($authenticationToken, $baseRequest);
+                $authenticationToken = $this->refreshAuthenticationToken($authenticationToken, $baseRequest);
             } elseif ($authenticationToken->isExpired()) {
                 $this->session->clear();
-                $this->createAndStoreAuthenticationToken($baseRequest);
+                $authenticationToken = $this->createAndStoreAuthenticationToken($baseRequest);
             }
         }
+
+        return $authenticationToken;
     }
 
     /**
-     * Refreshes the authentication token.
+     * Sets and returns a session token if not defined already.
      */
-    public function refreshAuthenticationToken(AuthenticationToken $authenticationToken, array $request): void
+    public function checkAndReturnSessionToken(): SessionToken
     {
-        $request['headers']['Authorization'] = sprintf('Bearer %s', $authenticationToken->getAccessToken());
-        $authenticationUrl                   = $this->generateAuthenticationBaseUrl();
+        $sessionToken = $this->session->get(self::SESSION_TOKEN_KEY);
 
-        $response = $this->client->request(
-            'POST',
-            sprintf('%s%s', $authenticationUrl, self::INBENTA_AUTHENTICATION_REFRESH_TOKEN_ENDPOINT),
-            $request
-        );
-
-        if (Response::HTTP_OK !== $response->getStatusCode()) {
-            throw new InvalidInbentaParametersException($response->getStatusCode(), 'There was a problem during the authentication process. Please check the authentication variables.');
-        }
-        $decodedResponse = json_decode($response->getContent(), true);
-        $authenticationToken
-            ->setAccessToken($decodedResponse['accessToken'])
-            ->setTokenExpiration($decodedResponse['expiration'])
-            ->setTokenExpirationRemainingTime($decodedResponse['expires_in']);
-        $this->session->set(self::AUTHENTICATION_TOKEN_SESSION_KEY, $authenticationToken);
-    }
-
-    /**
-     * Sets a new session token if not defined already.
-     */
-    public function checkSessionToken(): void
-    {
-        if (!$this->session->get(self::SESSION_TOKEN_KEY)) {
+        if (!$sessionToken) {
             /** @var AuthenticationToken $authenticationToken */
             $authenticationToken                 = $this->session->get(self::AUTHENTICATION_TOKEN_SESSION_KEY);
             $chatbotUrl                          = $authenticationToken->getChatBotApiUrl();
@@ -167,19 +148,29 @@ class AuthenticationService
             if (Response::HTTP_OK !== $response->getStatusCode()) {
                 throw new InvalidInbentaParametersException($response->getStatusCode(), 'There was a problem during the authentication process. Please check the authentication variables.');
             }
-            $decodedResponse = json_decode($response->getContent(), true);
-            $sessionId       = $decodedResponse['sessionId'];
-            $sessionToken    = $decodedResponse['sessionToken'];
-            $sessionToken    = new SessionToken($sessionId, $sessionToken);
+            $decodedResponse   = json_decode($response->getContent(), true);
+            $sessionId         = $decodedResponse['sessionId'];
+            $sessionTokenValue = $decodedResponse['sessionToken'];
+            $sessionToken      = new SessionToken($sessionId, $sessionTokenValue);
 
             $this->session->set(self::SESSION_TOKEN_KEY, $sessionToken);
         }
+
+        return $sessionToken;
+    }
+
+    /**
+     * Builds the authentication base url.
+     */
+    private function generateAuthenticationBaseUrl(): string
+    {
+        return sprintf('%s%s', $this->inbentaAuthenticationUri, $this->inbentaApiVersion);
     }
 
     /**
      * Creates and returns an authentication base request.
      */
-    public function createAuthenticationBaseRequest(): array
+    private function createAuthenticationBaseRequest(): array
     {
         return [
                 'headers' => [
@@ -190,9 +181,9 @@ class AuthenticationService
     }
 
     /**
-     * Creates and stores in session an authentication token.
+     * Creates, stores in session and returns an authentication token.
      */
-    private function createAndStoreAuthenticationToken(array $request): void
+    private function createAndStoreAuthenticationToken(array $request): AuthenticationToken
     {
         $authenticationBaseUrl = $this->generateAuthenticationBaseUrl();
         $request['body']       = json_encode(['secret' => $this->inbentaSecretKey]);
@@ -215,13 +206,34 @@ class AuthenticationService
             );
 
         $this->session->set(self::AUTHENTICATION_TOKEN_SESSION_KEY, $authenticationToken);
+
+        return $authenticationToken;
     }
 
     /**
-     * Builds the authentication base url.
+     * Refreshes and returns the authentication token.
      */
-    private function generateAuthenticationBaseUrl(): string
+    private function refreshAuthenticationToken(AuthenticationToken $authenticationToken, array $request): AuthenticationToken
     {
-        return sprintf('%s%s', $this->inbentaAuthenticationUri, $this->inbentaApiVersion);
+        $request['headers']['Authorization'] = sprintf('Bearer %s', $authenticationToken->getAccessToken());
+        $authenticationUrl                   = $this->generateAuthenticationBaseUrl();
+
+        $response = $this->client->request(
+            'POST',
+            sprintf('%s%s', $authenticationUrl, self::INBENTA_AUTHENTICATION_REFRESH_TOKEN_ENDPOINT),
+            $request
+        );
+
+        if (Response::HTTP_OK !== $response->getStatusCode()) {
+            throw new InvalidInbentaParametersException($response->getStatusCode(), 'There was a problem during the authentication process. Please check the authentication variables.');
+        }
+        $decodedResponse = json_decode($response->getContent(), true);
+        $authenticationToken
+            ->setAccessToken($decodedResponse['accessToken'])
+            ->setTokenExpiration($decodedResponse['expiration'])
+            ->setTokenExpirationRemainingTime($decodedResponse['expires_in']);
+        $this->session->set(self::AUTHENTICATION_TOKEN_SESSION_KEY, $authenticationToken);
+
+        return $authenticationToken;
     }
 }
