@@ -14,7 +14,7 @@ namespace App\Entity;
 class AuthenticationToken
 {
     /**
-     * Number of seconds threshold where the token has to be refreshed.
+     * Timestamp difference value (3 minutes) threshold when the token has to be refreshed.
      */
     const TIMESTAMP_REFRESH_THRESHOLD = 180;
 
@@ -45,7 +45,7 @@ class AuthenticationToken
     private $tokenExpirationRemainingTime;
 
     /**
-     * An array containing API useful urls.
+     * An array containing API useful urls like chatbot URL.
      *
      * @var array
      */
