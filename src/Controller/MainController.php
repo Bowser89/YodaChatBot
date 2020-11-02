@@ -35,13 +35,4 @@ class MainController extends AbstractController
 
         return $this->render('index.html.twig', $data);
     }
-
-    /**
-     * Action for route: yoda.index.
-     */
-    public function helloAction(SessionInterface $session): Response
-    {
-
-        return $this->render('hello.html.twig');
-    }
 }

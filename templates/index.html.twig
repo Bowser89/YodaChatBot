@@ -2,7 +2,6 @@
 
 {% block title %} Welcome !{% endblock %}
 {% block body %}
-    <a href="{{ path('yoda.hello') }}">cliccaaaaa</a>
     <div class="example-wrapper" id="app">
         <app v-bind:previous-conversation="{{ conversation | json_encode }}"></app>
     </div>
