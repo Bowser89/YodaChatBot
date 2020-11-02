@@ -2,6 +2,10 @@ yoda.index:
     path: /
     controller: App\Controller\MainController::indexAction
 
+yoda.hello:
+    path: /hello
+    controller: App\Controller\MainController::helloAction
+
 # Yoda API namespace#
 
 yoda_api.send_message:
