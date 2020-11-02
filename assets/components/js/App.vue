@@ -55,16 +55,7 @@
                 this.appendToConversation(userQuestion);
                 this.isWriting = true;
 
-                axios.post('/api/send_message', this.form)
-                    .then((response) => {
-                        console.log(response);
-                        this.isWriting = false;
-                        this.appendToConversation(response.data.message);
-                    })
-                    .catch((error) => {
-                    }).finally(() => {
-                    this.form.message = '';
-                });
+                 console.log('hello');
             },
             appendToConversation(data) {
                 this.messages.push({'messages' : data.messages, 'source' : data.source , 'titlePhrase' : data.titlePhrase });
