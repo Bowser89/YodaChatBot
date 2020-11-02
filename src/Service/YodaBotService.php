@@ -58,6 +58,6 @@ class YodaBotService
         $previousConversation   = $this->session->get(self::SESSION_CONVERSATION_LIST);
         $previousConversation[] = $formattedMessage->serialize();
 
-        $this->session->replace([self::SESSION_CONVERSATION_LIST => $previousConversation]);
+        $this->session->set(self::SESSION_CONVERSATION_LIST, $previousConversation);
     }
 }
