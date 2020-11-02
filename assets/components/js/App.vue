@@ -57,12 +57,11 @@
 
                 axios.post('/api/send_message', this.form)
                     .then((response) => {
-                        this.form.message = '';
+                        console.log(response);
                         this.isWriting = false;
                         this.appendToConversation(response.data.message);
                     })
                     .catch((error) => {
-                        this.form.message = '';
                     }).finally(() => {
                     this.form.message = '';
                 });
@@ -71,7 +70,11 @@
                 this.messages.push({'messages' : data.messages, 'source' : data.source , 'titlePhrase' : data.titlePhrase });
             },
             clearHistory() {
-                this.messages = [];
+                var self = this;
+                axios.post('/api/clear_history')
+                    .then(function () {
+                        self.messages = [];
+                    });
             }
         }
     }
