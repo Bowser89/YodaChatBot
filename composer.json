@@ -54,7 +54,8 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "yarn encore dev-server"
         ],
         "post-update-cmd": [
             "@auto-scripts",
