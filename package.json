@@ -10,13 +10,13 @@
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
-        "start": "node server.js",
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
         "code:php:cs-fix": "php vendor/bin/php-cs-fixer fix --config .php_cs --allow-risky yes",
-        "test:unit": "php bin/phpunit"
+        "test:unit": "php bin/phpunit",
+        "postinstall": "encore production --progress"
     },
     "dependencies": {
         "axios": "^0.20.0",
