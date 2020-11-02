@@ -57,7 +57,8 @@
             "@auto-scripts"
         ],
         "post-update-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "yarn encore dev-server"
         ]
     },
     "conflict": {
