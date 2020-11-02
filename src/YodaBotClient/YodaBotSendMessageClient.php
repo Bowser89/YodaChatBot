@@ -61,11 +61,11 @@ class YodaBotSendMessageClient extends YodaBotAbstractClient
         $request[self::SEND_MESSAGE_ENDPOINT_KEY]    = self::SEND_MESSAGE_ENDPOINT_VALUE;
 
         // Performing request
-        $response            = $this->inbentaClient->call($request);
-        $decodedResponse     = json_decode($response->getContent(), true);
-        $answerNotFound      = $this->checkIfNotFoundAndUpdateSessionCounter($decodedResponse);
-        $notFoundCounter     = $this->session->get(self::SESSION_NOT_FOUND_MESSAGE_KEY);
-        $responseDto         = null;
+        $response        = $this->inbentaClient->call($request);
+        $decodedResponse = json_decode($response->getContent(), true);
+        $answerNotFound  = $this->checkIfNotFoundAndUpdateSessionCounter($decodedResponse);
+        $notFoundCounter = $this->session->get(self::SESSION_NOT_FOUND_MESSAGE_KEY);
+        $responseDto     = null;
 
         if (self::NOT_FOUND_ANSWERS_THRESHOLD === $notFoundCounter) {
             $this->resetNotFoundAnswerCounter();
