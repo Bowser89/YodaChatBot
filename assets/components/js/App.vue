@@ -3,6 +3,11 @@
         <div class="offset-4 col-lg-4" style="margin-top: 30px;">
             <button class="btn btn-primary" v-on:click="clearHistory" style="width: 100%;">Clear History</button>
         </div>
+        <div class="row">
+            <div v-if="errorMessage !== null" id="errorMessage">
+                {{errorMessage}}
+            </div>
+        </div>
         <ul id="conversation">
             <div v-for="messageItem in messages">
                 <li :class="[messageItem.source === 'Human' ? 'user' : 'yodaBot']">
@@ -54,6 +59,7 @@
                 },
                 isWriting: false,
                 messages: this.previousConversation,
+                errorMessage: null
             }
         },
         methods:{
@@ -65,14 +71,15 @@
 
                 axios.post('/api/send_message', this.form)
                     .then((response) => {
-                        console.log(response);
                         this.isWriting = false;
                         this.appendToConversation(response.data.message);
                     })
                     .catch((error) => {
                         that.messages = '';
+                        that.errorMessage = 'Oh! There was an error. Please clear history and refresh page';
                     }).finally(() => {
-                    this.form.message = '';
+                    that.form.message = '';
+                    that.isWriting = false;
                 });
             },
             appendToConversation(data) {
