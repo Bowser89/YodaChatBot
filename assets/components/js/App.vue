@@ -4,13 +4,31 @@
             <button class="btn btn-primary" v-on:click="clearHistory" style="width: 100%;">Clear History</button>
         </div>
         <div class="row">
-            <div v-if="errorMessage !== null" id="errorMessage">
+            <div v-if="errorMessage !== null" id="errorMessage" style="background: #cc0000;
+    padding: 1em;
+    margin-top: 1em;
+    text-align: center;
+    border-radius: 10px 10px;
+    width: 100%;">
                 {{errorMessage}}
             </div>
         </div>
-        <ul id="conversation">
+        <ul id="conversation" style="list-style: none;
+    margin-top: 7em;
+    margin-bottom: 7em;
+    font-size: 13px;">
             <div v-for="messageItem in messages">
-                <li :class="[messageItem.source === 'Human' ? 'user' : 'yodaBot']">
+                <li :style="[messageItem.source === 'Human' ? 'padding: 1em;'+
+'    width: 50%;'+
+'    margin-top: 1em;'+
+'    background: #d5cbbf;border-radius: 10px 0px 10px 10px;'+
+'    text-align: right;'+
+'    margin-left: 35%;' : 'background: #b8da91;'+
+'    border-radius: 0px 10px 10px 10px;'+
+'    padding: 1em;'+
+'    width: 50%;'+
+'    margin-top: 1em;'+
+'    text-align: left;']">
                     <div v-if="messageItem.source === 'Human'">
                         You:
                     </div>
@@ -32,7 +50,13 @@
             </div>
         </ul>
         <div v-if="isWriting" style="text-align: center">Yoda is looking for knowledge . . .</div>
-        <div class="chat-form">
+        <div class="chat-form" style="background: white;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: fixed;
+    padding: 1em;">
             <div class="row">
                 <div class="col-lg-12">
                     <form v-on:submit.prevent="sendMessage" class="form-inline">
