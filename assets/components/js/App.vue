@@ -37,7 +37,13 @@
             </div>
         </ul>
         <div v-if="isWriting" style="text-align: center">Yoda is looking for knowledge . . .</div>
-        <div class="chat-form">
+        <div class="chat-form" style="background: white;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: fixed;
+    padding: 1em;">
             <div class="row">
                 <div class="col-lg-12">
                     <form v-on:submit.prevent="sendMessage" class="form-inline">
