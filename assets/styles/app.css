@@ -1,4 +1,47 @@
 body {
-    background-color: black;
+    background-color: white;
+}
+
+.header {
+    background-color: rgb(88, 132, 67);
+}
+
+.navbar-dark .navbar-brand {
+    margin: 0 auto;
+}
+
+.user {
+    padding: 1em;
+    width: 50%;
+    margin-top: 1em;
+    background: #d5cbbf;border-radius: 10px 0px 10px 10px;
+    text-align: right;
+    margin-left: 35%;
+}
+
+.yodaBot {
+    background: #b8da91;
+    border-radius: 0px 10px 10px 10px;
+    padding: 1em;
+    width: 50%;
+    margin-top: 1em;
+    text-align: left;
+}
+
+#conversation {
+    list-style: none;
+    margin-top: 7em;
+    margin-bottom: 7em;
+    font-size: 13px;
+}
+
+.chat-form {
+    background: white;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: fixed;
+    padding: 1em;
 }
 

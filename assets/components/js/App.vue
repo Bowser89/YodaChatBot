@@ -1,37 +1,44 @@
 <template>
-    <div>
-        <h2>Talk with Yoda!</h2>
-        <div id="conversation">
+    <div id="chat" class="container">
+        <div class="offset-4 col-lg-4" style="margin-top: 30px;">
+            <button class="btn btn-primary" v-on:click="clearHistory" style="width: 100%;">Clear History</button>
+        </div>
+        <ul id="conversation">
             <div v-for="messageItem in messages">
-                <div v-if="messageItem.source === 'Human'">
-                    You:
-                </div>
-                <div v-else>
-                    YodaBot Says:
-                </div>
-                <div v-if="messageItem.titlePhrase">
-                    {{messageItem.titlePhrase}}
-                    <div v-for="message in messageItem.messages ">
-                        <li>{{ message }}</li>
+                <li :class="[messageItem.source === 'Human' ? 'user' : 'yodaBot']">
+                    <div v-if="messageItem.source === 'Human'">
+                        You:
                     </div>
-                </div>
-                <div v-else>
-                    <div v-for="message in messageItem.messages ">
-                        {{ message }}
+                    <div v-else>
+                        YodaBot Says:
                     </div>
+                    <div v-if="messageItem.titlePhrase">
+                        {{messageItem.titlePhrase}}
+                        <div v-for="message in messageItem.messages ">
+                            <li>{{ message }}</li>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div v-for="message in messageItem.messages ">
+                            {{ message }}
+                        </div>
+                    </div>
+                </li>
+            </div>
+        </ul>
+        <div v-if="isWriting" style="text-align: center">Yoda is looking for knowledge . . .</div>
+        <div class="chat-form">
+            <div class="row">
+                <div class="col-lg-12">
+                    <form v-on:submit.prevent="sendMessage" class="form-inline">
+                        <input type="text" placeholder="Ask something to the real Yoda!" v-model="form.message" required style="display: inline-block!important;width: 85%!important;">
+                        <button class="btn btn-primary ml-2">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>
-        <p v-if="isWriting">Yoda is looking for knowledge . . .</p>
-        <form v-on:submit.prevent="sendMessage"><br>
-            <input type="text" placeholder="Ask something to the real Yoda!" v-model="form.message" required>
-            <button class="btn btn-primary">Submit</button>
-        </form>
-        <button class="btn btn-primary" v-on:click="clearHistory">Clear History</button>
-
     </div>
 </template>
-
 <script>
     export default {
         props: {
@@ -52,6 +59,7 @@
         methods:{
             sendMessage() {
                 var userQuestion = {'messages' : [this.form.message], 'source' : 'Human', 'titlePhrase' : null};
+                var that = this;
                 this.appendToConversation(userQuestion);
                 this.isWriting = true;
 
@@ -62,6 +70,7 @@
                         this.appendToConversation(response.data.message);
                     })
                     .catch((error) => {
+                        that.messages = '';
                     }).finally(() => {
                     this.form.message = '';
                 });
