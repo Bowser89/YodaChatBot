@@ -173,13 +173,16 @@ class AuthenticationServiceTest extends TestCase
     }
 
     /**
-     * Tests that the token won't be refreshed if valid and not expired.
+     * Tests that the token is refreshed if valid and expiring.
      *
      * @covers ::setAuthenticationTokenIfNotExists
      */
     public function testSetAuthenticationRefreshesTokenIfExpiring(): void
     {
-        $almostExpiredToken = new AuthenticationToken('accessTokenValue', time(), 150, [], false);
+        // Timestamp representing an almost expired authentication token
+        $expiringTimestamp  = time() + 150;
+        $almostExpiredToken = new AuthenticationToken('accessTokenValue', $expiringTimestamp, 150, [], false);
+        $responseToken      = $this->createClientAuthenticationTokenResponse();
 
         $this->session->set(AuthenticationService::AUTHENTICATION_TOKEN_SESSION_KEY, $almostExpiredToken);
 
@@ -196,15 +199,16 @@ class AuthenticationServiceTest extends TestCase
         $this->response
             ->expects($this->once())
             ->method('getContent')
-            ->willReturn($this->createClientAuthenticationTokenResponse());
+            ->willReturn($responseToken);
 
         $this->authenticationService->setAndReturnAuthenticationTokenIfNotExists();
 
         /** @var AuthenticationToken $token */
-        $token = $this->session->get(AuthenticationService::AUTHENTICATION_TOKEN_SESSION_KEY);
+        $token                = $this->session->get(AuthenticationService::AUTHENTICATION_TOKEN_SESSION_KEY);
+        $decodedResponseToken = json_decode($responseToken, true);
 
         $this->assertEquals('accessTokenValue', $token->getAccessToken());
-        $this->assertEquals(1604056964, $token->getTokenExpiration());
+        $this->assertEquals($decodedResponseToken['expiration'], $token->getTokenExpiration());
         $this->assertEquals(1200, $token->getTokenExpirationRemainingTime());
         $this->assertFalse($token->isUserIdentified());
     }
