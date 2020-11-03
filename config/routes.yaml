@@ -8,3 +8,8 @@ yoda_api.send_message:
     path: /api/send_message
     controller: App\Controller\YodaBotController::sendMessageAction
     methods: [POST]
+
+yoda_api.clear_history:
+    path: /api/clear_history
+    controller: App\Controller\YodaBotController::clearHistoryAction
+    methods: [POST]
