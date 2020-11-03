@@ -13,22 +13,9 @@
                 {{errorMessage}}
             </div>
         </div>
-        <ul id="conversation" style="list-style: none;
-    margin-top: 7em;
-    margin-bottom: 7em;
-    font-size: 13px;">
+        <ul id="conversation" style="list-style-type: none;">
             <div v-for="messageItem in messages">
-                <li :style="[messageItem.source === 'Human' ? 'padding: 1em;'+
-'    width: 50%;'+
-'    margin-top: 1em;'+
-'    background: #d5cbbf;border-radius: 10px 0px 10px 10px;'+
-'    text-align: right;'+
-'    margin-left: 35%;' : 'background: #b8da91;'+
-'    border-radius: 0px 10px 10px 10px;'+
-'    padding: 1em;'+
-'    width: 50%;'+
-'    margin-top: 1em;'+
-'    text-align: left;']">
+                <li v-bind:style="messageItem.source === 'Human' ? 'padding: 1em;width: 50%;margin-top: 1em;background: #d5cbbf;border-radius: 10px 0px 10px 10px;text-align: right;margin-left: 35%;': 'background: #b8da91;border-radius: 0px 10px 10px 10px;padding: 1em;width: 50%;margin-top: 1em;text-align: left;'">
                     <div v-if="messageItem.source === 'Human'">
                         You:
                     </div>
@@ -50,13 +37,7 @@
             </div>
         </ul>
         <div v-if="isWriting" style="text-align: center">Yoda is looking for knowledge . . .</div>
-        <div class="chat-form" style="background: white;
-    width: 100%;
-    bottom: 0;
-    left: 0;
-    overflow: hidden;
-    position: fixed;
-    padding: 1em;">
+        <div class="chat-form">
             <div class="row">
                 <div class="col-lg-12">
                     <form v-on:submit.prevent="sendMessage" class="form-inline">
