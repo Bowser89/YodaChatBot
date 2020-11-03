@@ -148,7 +148,7 @@ class AuthenticationService
             if (Response::HTTP_OK !== $response->getStatusCode()) {
                 throw new InvalidInbentaParametersException($response->getStatusCode(), 'There was a problem during the authentication process. Please check the authentication variables.');
             }
-            
+
             $decodedResponse   = json_decode($response->getContent(), true);
             $sessionId         = $decodedResponse['sessionId'];
             $sessionTokenValue = $decodedResponse['sessionToken'];
